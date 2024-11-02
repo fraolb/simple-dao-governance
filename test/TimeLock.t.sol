@@ -74,4 +74,27 @@ contract TimeLockTest is Test {
         // Verify that the operation has been executed
         assertTrue(timeLock.isOperationDone(operationId));
     }
+
+    function testCannotExecuteBeforeDelay() public {
+        // Define the target, value, and data for the transaction
+        address target = address(this);
+        uint256 value = 0;
+        bytes memory data = abi.encodeWithSignature("dummyFunction()");
+
+        // Schedule the operation
+        vm.prank(proposer);
+        timeLock.schedule(
+            target,
+            value,
+            data,
+            bytes32(0),
+            keccak256(""),
+            minDelay
+        );
+
+        // Attempt to execute before the minimum delay should revert
+        vm.expectRevert("TimelockController: operation is not ready");
+        vm.prank(executor);
+        timeLock.execute(target, value, data, bytes32(0), keccak256(""));
+    }
 }
