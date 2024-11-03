@@ -97,4 +97,23 @@ contract TimeLockTest is Test {
         vm.prank(executor);
         timeLock.execute(target, value, data, bytes32(0), keccak256(""));
     }
+
+    function testNonProposerCannotSchedule() public {
+        // Define the target, value, and data for the transaction
+        address target = address(this);
+        uint256 value = 0;
+        bytes memory data = abi.encodeWithSignature("dummyFunction()");
+
+        // Attempt to schedule an operation as a non-proposer should revert
+        vm.expectRevert("AccessControl: account is missing role");
+        vm.prank(nonProposer);
+        timeLock.schedule(
+            target,
+            value,
+            data,
+            bytes32(0),
+            keccak256(""),
+            minDelay
+        );
+    }
 }
