@@ -116,4 +116,30 @@ contract TimeLockTest is Test {
             minDelay
         );
     }
+
+    function testNonExecutorCannotExecute() public {
+        // Define the target, value, and data for the transaction
+        address target = address(this);
+        uint256 value = 0;
+        bytes memory data = abi.encodeWithSignature("dummyFunction()");
+
+        // Schedule the operation with proposer privileges
+        vm.prank(proposer);
+        timeLock.schedule(
+            target,
+            value,
+            data,
+            bytes32(0),
+            keccak256(""),
+            minDelay
+        );
+
+        // Fast-forward time to meet the minimum delay
+        vm.warp(block.timestamp + minDelay);
+
+        // Attempt to execute as a non-executor should revert
+        vm.expectRevert("AccessControl: account is missing role");
+        vm.prank(nonExecutor);
+        timeLock.execute(target, value, data, bytes32(0), keccak256(""));
+    }
 }
