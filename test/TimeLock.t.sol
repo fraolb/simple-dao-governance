@@ -142,4 +142,9 @@ contract TimeLockTest is Test {
         vm.prank(nonExecutor);
         timeLock.execute(target, value, data, bytes32(0), keccak256(""));
     }
+
+    // Dummy function for testing execution
+    function dummyFunction() public pure returns (string memory) {
+        return "Executed";
+    }
 }
