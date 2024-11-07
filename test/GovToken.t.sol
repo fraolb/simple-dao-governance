@@ -10,7 +10,6 @@ contract GovTokenTest is Test {
     address deployer = address(this);
     address user1 = address(0x1);
     address user2 = address(0x2);
-    address user3 = address(0x3);
 
     function setUp() public {
         // Deploy the GovToken contract
